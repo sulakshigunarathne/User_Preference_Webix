@@ -23,18 +23,34 @@ webix.ready(function () {
   };
 
 // Function to toggle dark mode
+// window.toggleTheme = function (isDark) {
+//   if (isDark) {
+//     // document.body.classList.add("webix_dark");
+//     webix.skin.set("dark");
+
+//   } else {
+//     // document.body.classList.remove("webix_dark");
+//     webix.skin.set("material");
+//   }
+//   // webix.ui.each($$("mainView"), function (view) {
+//   //   view.refresh();
+//   // });
+//   //webix.ui.refresh();
+// };
 window.toggleTheme = function (isDark) {
+  const darkTheme = document.querySelector('link[href*="dark.css"]');
+
   if (isDark) {
-    // document.body.classList.add("webix_dark");
-    webix.skin.set("webix_dark");
+    darkTheme.removeAttribute("disabled"); // Enable the dark theme
+    webix.skin.set("dark");
+    document.body.classList.add("dark-mode");
 
   } else {
-    // document.body.classList.remove("webix_dark");
+    darkTheme.setAttribute("disabled", "true"); // Disable the dark theme
     webix.skin.set("material");
+    document.body.classList.remove("dark-mode");
   }
-  webix.ui.each($$("mainView"), function (view) {
-    view.refresh();
-  });
+  
 };
 
  // Set default view

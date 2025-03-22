@@ -1,11 +1,17 @@
 :root {
     --bg-color: #ffffff;
     --text-color: #000000;
+    --test-btn-color: #039c2f;
 }
 
 .dark-mode {
     --bg-color: #222222;
     --text-color: #ffffff;
+    --test-btn-color: #9c3b03;
+}
+.test-btn .webix_button {
+    background-color: var(--test-btn-color) !important;
+    color: #333;
 }
 
 .webix_view {
