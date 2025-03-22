@@ -1,0 +1,14 @@
+:root {
+    --bg-color: #ffffff;
+    --text-color: #000000;
+}
+
+.dark-mode {
+    --bg-color: #222222;
+    --text-color: #ffffff;
+}
+
+.webix_view {
+    background-color: var(--bg-color) !important;
+    color: var(--text-color) !important;
+}
