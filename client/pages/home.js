@@ -1,27 +1,30 @@
+
+//before adding responsiveness
+
 export const HomePage = {
     id: "home",
-    // template: `
-    //   <div style="height: 500px; display: flex; align-items: center; justify-content: center;">
-    //     <h2>Welcome to the Home Page</h2>
-    //   </div>
-    // `
+    view: "layout",
+    css: "home-container",
     rows:[
         {
             view: "template",
-            height: 400, // Adjust height for proper spacing
+            height: 400, 
+            css:"image-container",
             template: `
                 <div class="image-container">
-                    <div class="overlay-text">
-                        <h2>Welcome to the <span class="app-name">Demo App</span></h2>
+    
+                        <h2 class="h2tag">Welcome to the <span class="app-name">Demo App!</span></h2>
                         <p class="description">The User Settings lets you customize notifications, themes, and language for a personalized experience.</p>
-                        <a href="#" class="login-link">Log In</a>
-                    </div>
+                        <button class="login-button" onclick="webix.message('Login Clicked!')">Log In</button>
+                    
                 </div>
             `
         },
         {
             cols: [
                 {
+                    view:"layout",
+                    css: "column-layout",
                     rows: [
                         { 
                             view: "template",
@@ -29,28 +32,40 @@ export const HomePage = {
                             css: "profile-title",
                             height: 40
                         },
-                        { 
-                            view: "template",
-                            template: "<p>Take control of your information with ease and security!</p>", 
-                            css: "profile-text",
-                            height: 60
-                        },
-                        
+                        {
+                            view: "button",
+                            value: "Register", // Button text
+                            css: "register-button", // CSS class for styling
+                            click: function() {
+                                // Add the action when the button is clicked (e.g., navigating to a registration page)
+                                alert("Register button clicked!");
+                            }
+                        }
                     ],
-                    css: "left-column",
+                
                 },
                 {
-                    view: "template",
-                    css: "right-column",
-                    template: `
-                        <div class="footer-links">
-                            <a href="#">About</a>
-                            <a href="#">Terms of Service</a>
-                            <a href="#">Contact Info</a>
-                        </div>
-                    `,
+                    view: "list",
+                    id: "clickable-list", // Assign an ID for the list
+                    css: "right-column", // CSS for the right column
+                    template: "#title#", // Assuming you have a `title` field in your data
+                    select: true, // Allows selecting items
+                    data: [
+                        { id: 1, title: "About Us" },
+                        { id: 2, title: "Terms of Service" },
+                        { id: 3, title: "Contact Info" }
+        ],
+        on: {
+            onItemClick: function(id) {
+                const item = this.getSelectedItem();
+                alert(item.title + " clicked!");
+            }
+        }
                 }
             ]
         }
     ]
   };
+
+
+  

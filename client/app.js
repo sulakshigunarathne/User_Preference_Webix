@@ -1,6 +1,11 @@
 import { Navbar } from "./components/navbar.js";
 import { HomePage } from "./pages/home.js";
 import { AboutPage } from "./pages/about.js";
+import { LoginPage } from "./pages/login.js";
+import { SignupPage } from "./pages/register.js";
+import { ForgotPasswordPage } from "./pages/forgotpassword.js";
+import { OtpVerificationPage } from "./pages/otpverify.js";
+import { ProfilePage } from "./pages/profile.js";
 
 webix.ready(function () {
   webix.ui({
@@ -12,7 +17,7 @@ webix.ready(function () {
         id: "mainView",
         // height: 500,
         gravity: 1,
-        cells: [HomePage, AboutPage] // Define available pages
+        cells: [HomePage, AboutPage, LoginPage, SignupPage, ForgotPasswordPage, OtpVerificationPage, ProfilePage] // Define available pages
       }
     ]
   });
@@ -56,3 +61,4 @@ window.toggleTheme = function (isDark) {
  // Set default view
  showView("home");
 });
+

@@ -1,0 +1,14 @@
+.custom-button .webix_button {
+    background-color: #18439b !important;
+    color: rgb(212, 33, 33) !important;
+    font-size: 16px !important;
+    font-weight: bold !important;
+    border-radius: 25px !important;
+    transition: background 0.3s ease, transform 0.2s ease !important;
+}
+
+/* Hover Effect */
+.custom-button:hover {
+    background-color: #0030a3 !important;
+    transform: scale(1.05) !important;
+}
