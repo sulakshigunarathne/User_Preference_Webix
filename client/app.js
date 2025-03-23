@@ -1,11 +1,11 @@
 import { Navbar } from "./components/navbar.js";
 import { HomePage } from "./pages/home.js";
-import { AboutPage } from "./pages/about.js";
 import { LoginPage } from "./pages/login.js";
 import { SignupPage } from "./pages/register.js";
-import { ForgotPasswordPage } from "./pages/forgotpassword.js";
-import { OtpVerificationPage } from "./pages/otpverify.js";
 import { ProfilePage } from "./pages/profile.js";
+import { NotificationPage } from "./pages/notifications.js";
+import { SettingsPage } from "./pages/settings.js";
+
 
 webix.ready(function () {
   webix.ui({
@@ -13,13 +13,21 @@ webix.ready(function () {
     rows: [
       Navbar,
       {
-        view: "multiview",
-        id: "mainView",
-        // height: 500,
-        gravity: 1,
-        cells: [HomePage, AboutPage, LoginPage, SignupPage, ForgotPasswordPage, OtpVerificationPage, ProfilePage] // Define available pages
-      }
-    ]
+        view: "scrollview",
+        body: {
+          view: "multiview",
+          id: "mainView",
+          cells: [
+            { id: "home", ...HomePage },
+            { id: "login", ...LoginPage },
+            { id: "signup", ...SignupPage },
+            { id: "profile", ...ProfilePage },
+            { id: "notifications", ...NotificationPage },
+            { id: "settings", ...SettingsPage },
+          ]
+        },
+      },
+    ],
   });
 
   // Function to handle navigation
@@ -27,38 +35,70 @@ webix.ready(function () {
     $$("mainView").setValue(viewId);
   };
 
-// Function to toggle dark mode
-// window.toggleTheme = function (isDark) {
-//   if (isDark) {
-//     // document.body.classList.add("webix_dark");
-//     webix.skin.set("dark");
+  // Set default view
+  showView("home");
 
-//   } else {
-//     // document.body.classList.remove("webix_dark");
-//     webix.skin.set("material");
-//   }
-//   // webix.ui.each($$("mainView"), function (view) {
-//   //   view.refresh();
-//   // });
-//   //webix.ui.refresh();
-// };
-window.toggleTheme = function (isDark) {
-  const darkTheme = document.querySelector('link[href*="dark.css"]');
+  window.toggleTheme = function (isDark) {
+    const darkTheme = document.querySelector('link[href*="dark.css"]');
 
-  if (isDark) {
-    darkTheme.removeAttribute("disabled"); // Enable the dark theme
-    webix.skin.set("dark");
-    document.body.classList.add("dark-mode");
+    if (isDark) {
+      darkTheme.removeAttribute("disabled"); // Enable the dark theme
+      webix.skin.set("dark");
+      document.body.classList.add("dark-mode");
+    } else {
+      darkTheme.setAttribute("disabled", "true"); // Disable the dark theme
+      webix.skin.set("material");
+      document.body.classList.remove("dark-mode");
+    }
+  };
 
-  } else {
-    darkTheme.setAttribute("disabled", "true"); // Disable the dark theme
-    webix.skin.set("material");
-    document.body.classList.remove("dark-mode");
-  }
-  
-};
+  // *Keyboard Navigation*
+  webix.event(document, "keydown", function (e) {
+    const multiview = $$("mainView");
+    const views = multiview.getChildViews();
+    let currentIndex = views.findIndex(
+      (view) => view.config.id === multiview.getValue()
+    );
+    // let currentView = views[currentIndex];
+    // let currentViewRows = currentView.config.body.rows;
+    // console.log(currentViewRows, "currentViewRows");
+    let isLogin = JSON.parse(localStorage.getItem("loggedUser")) || false;
+    if (!isLogin && (currentIndex!=0) && (currentIndex!=1) ){
+      if (currentIndex ==2 && e.key === "ArrowRight"){
+        currentIndex=-1
+      }
+      else if (currentIndex ==0 && e.key === "ArrowLeft"){
+        currentIndex=3
+      }
+    }
 
- // Set default view
- showView("home");
+    if(isLogin){
+      if (currentIndex ==0 && e.key === "ArrowRight"){
+        currentIndex=2
+      }
+      else if (currentIndex ==2 && e.key === "ArrowLeft"){
+        currentIndex=1
+      }
+    }
+      
+      
+    if (e.key === "ArrowRight" || e.key === "Tab") {
+      // Move to next view
+      let nextIndex = (currentIndex + 1) % views.length;
+      multiview.setValue(views[nextIndex].config.id);
+      e.preventDefault(); // Prevent tabbing out of the app
+    } else if (e.key === "ArrowLeft") {
+      // Move to previous view
+      let prevIndex = (currentIndex - 1 + views.length) % views.length;
+      multiview.setValue(views[prevIndex].config.id);
+    } else if (e.key === "ArrowDown") {
+      let currentIndex;
+    } else if (e.key === "Enter") {
+      // Reload current view (or trigger an action)
+      multiview.setValue(views[currentIndex].config.id);
+    }
+  });
+
+
+
 });
-

@@ -109,9 +109,10 @@
 //         { gravity: 1 }
 //     ]
 // };
+import { updateProfile } from "../utils/updateprofile.js";
 
 export const SignupPage = {
-    id: "register",
+    id: "signup",
     css: "signup-page",
     rows: [
         { gravity: 1 },

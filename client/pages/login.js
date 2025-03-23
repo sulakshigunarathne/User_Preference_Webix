@@ -1,6 +1,6 @@
 // export const LoginPage = {
 //     id: "login",
-//     css: "login-page",
+//     //css: "login-page",
 //     rows: [
 //       { gravity: 1 },
 //       {
@@ -10,21 +10,21 @@
 //           {
 //             view: "form",
 //             id: "login_form",
-//             css: "login-container",
+//             //css: "login-container",
 //             borderless: true,
 //             width: Math.min(window.innerWidth * 0.8, 400),
 //             elements: [
 //               {
 //                 // Header with back button and title
 //                 view: "toolbar",
-//                 css: "login-header",
+//                 //css: "login-header",
 //                 height: 50,
 //                 borderless: true,
 //                 elements: [
 //                   {
 //                     view: "icon", 
 //                     icon: "wxi-arrow-left",
-//                     css: "back-arrow",
+//                     //css: "back-arrow",
 //                     click: function() {
 //                       showView("home");
 //                     }
@@ -32,7 +32,7 @@
 //                   {
 //                     view: "label", 
 //                     label: "Log in / Sign up", 
-//                     css: "login-title",
+//                     //css: "login-title",
 //                     align: "center"
 //                   },
                   
@@ -42,12 +42,12 @@
 //               {
 //                 view: "label",
 //                 label: "Email",
-//                 css: "field-label"
+//                 //css: "field-label"
 //               },
 //               {
 //                 view: "text",
 //                 name: "email",
-//                 css: "dark-input",
+//                 //css: "dark-input",
 //                 placeholder: "Enter your Email",
                 
 //               },
@@ -55,19 +55,19 @@
 //               {
 //                 view: "label",
 //                 label: "Password",
-//                 css: "field-label"
+//                 //css: "field-label"
 //               },
 //               {
 //                 view: "text",
 //                 type: "password",
 //                 name: "password",
-//                 css: "dark-input",
+//                 //css: "dark-input",
 //                 placeholder: "Enter your Password",
 //                 height: 45
 //               },
 //               {
 //                 view: "template",
-//                 css: "forgot-password-container",
+//                 //css: "forgot-password-container",
 //                 template: "<a href='#' class='forgot-password'>Forgot Password?</a>",
 //                 height: 40,
 //                 borderless: true
@@ -75,7 +75,7 @@
 //               {
 //                 view: "button",
 //                 value: "Log in",
-//                 css: "login-button",
+//                 //css: "login-button",
 //                 height: 50,
 //                 click: function() {
 //                   if ($$("login_form").validate()) {
@@ -88,7 +88,7 @@
 //               { height: 15 }, // Spacing
 //               {
 //                 view: "template",
-//                 css: "signup-container",
+//                 //css: "signup-container",
 //                 template: "<div class='signup-text'>Create a Account. <a href='#' class='signup-link'>Sign up</a></div>",
 //                 height: 40,
 //                 borderless: true,
@@ -110,97 +110,97 @@
 
 export const LoginPage = {
   id: "login",
-  css: "login-page",
-  rows: [
-    { gravity: 1 },
+  responsive: true,
+  type: "space",
+  cols: [
     {
-      cols: [
-        { gravity: 1 },
+      gravity: 1, // Allows dynamic resizing
+      hidden: isMobile(), // Hide empty space on small screens
+    },
+    {
+      view: "form",
+      id: "login_form",
+      borderless: true,
+      width: Math.min(window.innerWidth * 0.8, 400), // Adjusts width
+      elements: [
         {
-          view: "form",
-          id: "login_form",
-          css: "login-container",
+          view: "toolbar",
+          height: 50,
           borderless: true,
-          width: Math.min(window.innerWidth * 0.8, 400),
           elements: [
             {
-              view: "toolbar",
-              css: "login-header",
-              height: 50,
-              borderless: true,
-              elements: [
-                {
-                  view: "icon",
-                  icon: "wxi-arrow-left",
-                  css: "back-arrow",
-                  click: function () {
-                    showView("home");
-                  }
-                },
-                {
-                  view: "label",
-                  label: "Log in / Sign up",
-                  css: "login-title",
-                  align: "center"
-                },
-              ]
-            },
-            {
-              view: "text",
-              name: "email",
-              css: "dark-input",
-              placeholder: "Email",
-            },
-            {
-              view: "text",
-              type: "password",
-              name: "password",
-              css: "dark-input",
-              placeholder: "Password",
-            },
-            {
-              view: "template",
-              css: "forgot-password-container",
-              template: "<a href='#' class='forgot-password'>Forgot Password?</a>",
-              height: 40,
-              borderless: true,
-              onClick: {
-                "forgot-password": function () {
-                  showView("forgotpassword"); // Redirect to signup page
-                }
-              }
-
-            },
-            {
-              view: "button",
-              value: "Log in",
-              css: "login-button",
-              height: 50,
+              view: "icon",
+              icon: "wxi-arrow-left",
               click: function () {
-                if ($$("login_form").validate()) {
-                  webix.message("Login successful");
-                  showView("home");
-                }
+                showView("home");
               }
             },
-            { height: 15 },
             {
-              view: "template",
-              css: "signup-container",
-              template: "<div class='signup-text'>Create an Account. <a href='#' class='signup-link'>Sign up</a></div>",
-              height: 40,
-              borderless: true,
-              onClick: {
-                "signup-link": function () {
-                  showView("register"); // Redirect to signup page
-                }
-              }
-            }
+              view: "label",
+              label: "Log in / Sign up",
+              align: "center"
+            },
           ]
         },
-        { gravity: 1 }
+        {
+          view: "text",
+          name: "email",
+          placeholder: "Email",
+        },
+        {
+          view: "text",
+          type: "password",
+          name: "password",
+          placeholder: "Password",
+        },
+        {
+          view: "template",
+          template: "<a href='#' class='forgot-password'>Forgot Password?</a>",
+          height: 40,
+          borderless: true,
+          onClick: {
+            "forgot-password": function () {
+              showView("forgotpassword");
+            }
+          }
+        },
+        {
+          view: "button",
+          value: "Log in",
+          height: 50,
+          click: function () {
+            if ($$("login_form").validate()) {
+              // webix.message("Login successful");
+              // updateLoginState(true);
+              localStorage.setItem("loggedUser",true)
+              showView("home");
+              location.reload()
+              
+            }
+          }
+        },
+        { height: 15 },
+        {
+          view: "template",
+          template: "<div class='signup-text'>Create an Account. <a href='#' class='signup-link'>Sign up</a></div>",
+          height: 40,
+          borderless: true,
+          onClick: {
+            "signup-link": function () {
+              showView("register");
+            }
+          }
+        }
       ]
     },
-    { gravity: 1 }
+    {
+      gravity: 1, // Balances layout
+      hidden: isMobile(), // Hide extra space on small screens
+    },
   ]
 };
+
+// Utility function to detect mobile devices
+function isMobile() {
+  return window.innerWidth <= 768; // Adjust threshold as needed
+}

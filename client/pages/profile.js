@@ -388,7 +388,7 @@ const profileStore = {
     // Reset profile data
     resetProfile: function() {
         this.data = {
-            fullName: "Profile deleted",
+            fullName: "",
             email: "",
             profession: "",
             imageUrl: "",
@@ -412,7 +412,11 @@ const profileStore = {
             $$("profilePhotoContainer").setValues({ imageUrl: this.data.imageUrl });
             $$("profilePhotoContainer").refresh();
         }
-    }
+        },
+        setProfileImage: function(imageUrl) {
+            this.data.imageUrl = imageUrl;
+            this.updateUI();
+        }  
 };
 
 // Main Profile Page Component
@@ -428,7 +432,7 @@ export const ProfilePage = {
         {
             cols: [
                 {
-                    width: 500,
+                    
                     rows: [
                         {
                             view: "template",
@@ -436,15 +440,13 @@ export const ProfilePage = {
                             height: 150,
                             template: function(obj) {
                                 return `
-                                    <div class='photo-circle'>
+                                    <div class='photo-circle' onclick='window.triggerImageUpload()'>
                                         ${obj.imageUrl ? 
                                             `<img src='${obj.imageUrl}' class='profile-image'>` : 
-                                            `<div class='placeholder-icon'></div>` 
+                                            `<div class='placeholder-icon'>Click to upload</div>` 
                                         }
-                                        <div class='photo-edit-button' onclick='window.editProfilePhoto()'>
-                                            <i class='fas fa-pencil-alt'></i>
-                                        </div>
                                     </div>
+                                    <input type='file' id='imageUploadInput' style='display: none;' accept='image/*' onchange='window.handleImageUpload(event)' />
                                 `;
                             },
                             data: { imageUrl: "" }
@@ -479,50 +481,6 @@ export const ProfilePage = {
                                     value: "Edit Profile",
                                     click: function() {
                                         window.showProfileEditPopup();
-                                    }
-                                }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    rows: [
-                        {
-                            view: "template",
-                            height: 300,
-                            template: "<div class='journey-image'></div>"
-                        },
-                        {
-                            view: "template",
-                            height: 50,
-                            template: "<h2>Soft Skill Journey</h2>"
-                        },
-                        {
-                            view: "accordion",
-                            multi: true,
-                            rows: [
-                                {
-                                    header: "Communication",
-                                    body: {
-                                        view: "template",
-                                        height: 30,
-                                        template: "<div class='progress-container'><div class='progress-bar' style='width:75%'>75%</div></div>"
-                                    }
-                                },
-                                {
-                                    header: "Leadership",
-                                    body: {
-                                        view: "template",
-                                        height: 30,
-                                        template: "<div class='progress-container'><div class='progress-bar' style='width:55%'>55%</div></div>"
-                                    }
-                                },
-                                {
-                                    header: "Team Working",
-                                    body: {
-                                        view: "template",
-                                        height: 30,
-                                        template: "<div class='progress-container'><div class='progress-bar' style='width:90%'>90%</div></div>"
                                     }
                                 }
                             ]

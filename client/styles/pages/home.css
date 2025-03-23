@@ -1,7 +1,7 @@
 .home-container .webix_layout {
     display: flex !important;
     flex-direction: column !important;
-    height: 100vh !important; 
+    /* height: 100vh !important;  */
     width: 100% !important;
 }
 
@@ -65,16 +65,7 @@
     transition: background 0.3s ease, transform 0.2s ease !important;
 }
 
-.column-layout {
-    display: flex !important;
-    flex-direction: row !important;
-    justify-content: space-between !important;
-    align-items: center !important;
-    padding: 20px !important;
-    margin: 0 auto !important;
-    width: 100% !important;
-    max-width: 800px !important;
-}
+
 .left-column, .right-column {
     flex: 1 !important;  
     padding: 20px !important;
@@ -89,7 +80,7 @@
 }
 
 .register-button .webix_button {
-    display: inline-block !important;
+    /* display: inline-block !important; */
     background: linear-gradient(90deg, #004AAD 0%, #001E47 100%);
     color: white !important;
     margin-top: 15px !important;
@@ -102,6 +93,18 @@
     transition: background 0.3s ease, transform 0.2s ease !important;
 }
 
+.register-button1 .webix_button {
+    background: linear-gradient(90deg, #004AAD 0%, #001E47 100%) !important;
+    color: white !important;
+    border-radius: 25px !important;
+    cursor: pointer !important;
+    transition: background 0.3s ease, transform 0.2s ease !important;
+    font-size: 16px !important;
+    font-weight: bold !important;
+    width: 200px !important;
+    margin: auto !important;
+    margin-left: 75px !important;
+}
 
 .right-column .webix_list_item {
     font-size: 18px;
@@ -122,3 +125,14 @@
     background-color: #f0f0f0;
 }  
 
+.webix_view .column-layout  {
+    /* display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    padding: 20px !important;
+    margin: 0 auto !important; */
+    width: 400px !important;
+    max-width: 800px !important;
+    
+    
+}

@@ -1,71 +1,78 @@
 
-//before adding responsiveness
-
 export const HomePage = {
     id: "home",
+    type: "space",
     view: "layout",
     css: "home-container",
-    rows:[
+    rows: [
+        // Hero Section with Welcome Message
         {
             view: "template",
-            height: 400, 
-            css:"image-container",
+            height: 400,
+            css: "image-container",
             template: `
                 <div class="image-container">
-    
-                        <h2 class="h2tag">Welcome to the <span class="app-name">Demo App!</span></h2>
-                        <p class="description">The User Settings lets you customize notifications, themes, and language for a personalized experience.</p>
-                        <button class="login-button" onclick="webix.message('Login Clicked!')">Log In</button>
-                    
+                    <h2 class="h2tag">Welcome to the <span class="app-name">Demo App!</span></h2>
+                    <p class="description">The User Settings lets you customize notifications, themes, and language for a personalized experience.</p>
+                    <button class="login-button" onclick="showView('login')">Log In</button>
                 </div>
             `
         },
+
+        // Responsive Section with Two Columns
         {
+            type: "space",
+            responsive: "home",
             cols: [
+                // Left Column: Profile Call-to-Action
                 {
-                    view:"layout",
-                    css: "column-layout",
+                    view: "layout",
+                    // css: "left-column",
+                    gravity: 1, // Makes it adapt to screen width
                     rows: [
-                        { 
+                        {
                             view: "template",
-                            template: "<h3>Start Building Your Profile Today</h3>", 
-                            css: "profile-title",
-                            height: 40
+                            template: "<h3 style='text-align: left;'>Start Building Your Profile Today</h3>",
+                            
+                            // css: "profile-title",
                         },
                         {
                             view: "button",
-                            value: "Register", // Button text
-                            css: "register-button", // CSS class for styling
-                            click: function() {
-                                // Add the action when the button is clicked (e.g., navigating to a registration page)
-                                alert("Register button clicked!");
+                            value: "Register",
+                            css: "register-button1",
+                            align: "left",
+                            click: function () {
+                                webix.message("Register button clicked!");
+                                showView('register'); // Navigate to registration page
                             }
                         }
-                    ],
-                
+                    ]
                 },
+
+                // Right Column: About Us & Contact
                 {
-                    view: "list",
-                    id: "clickable-list", // Assign an ID for the list
-                    css: "right-column", // CSS for the right column
-                    template: "#title#", // Assuming you have a `title` field in your data
-                    select: true, // Allows selecting items
-                    data: [
-                        { id: 1, title: "About Us" },
-                        { id: 2, title: "Terms of Service" },
-                        { id: 3, title: "Contact Info" }
-        ],
-        on: {
-            onItemClick: function(id) {
-                const item = this.getSelectedItem();
-                alert(item.title + " clicked!");
-            }
-        }
+                    view: "scrollview",
+                    gravity: 2, // Makes it take more space than the left
+                    id: "info-section",
+                    // css: "right-column",
+                    body: {
+                        rows: [
+                            {
+                                template: "<h2>About Us</h2><p>We are dedicated to providing the best user experience with personalized settings and seamless navigation.</p>",
+                                autoheight: true,
+                                // css: "info-text"
+                            },
+                            {
+                                cols: [
+                                    { template: `<i class="fas fa-phone fa-2x"></i>`, autoheight: true, css: "contact-icon" },
+                                    { template: `<i class="fas fa-envelope fa-2x"></i>`, autoheight: true, css: "contact-icon" },
+                                    { template: `<i class="fab fa-linkedin fa-2x"></i>`, autoheight: true, css: "contact-icon" }
+                                ]
+                            }
+                        ]
+                    }
                 }
             ]
         }
     ]
-  };
-
-
-  
+};
