@@ -1,7 +1,7 @@
 import { Navbar } from "./components/navbar.js";
 import { HomePage } from "./pages/home.js";
 import { LoginPage } from "./pages/login.js";
-import { SignupPage } from "./pages/register.js";
+import { SignupPage } from "./pages/signup.js";
 import { ProfilePage } from "./pages/profile.js";
 import { NotificationPage } from "./pages/notifications.js";
 import { SettingsPage } from "./pages/settings.js";
@@ -82,12 +82,13 @@ webix.ready(function () {
     }
       
       
-    if (e.key === "ArrowRight" || e.key === "Tab") {
+    if (e.ctrlKey && e.key === "ArrowRight") {
       // Move to next view
       let nextIndex = (currentIndex + 1) % views.length;
       multiview.setValue(views[nextIndex].config.id);
+      
       e.preventDefault(); // Prevent tabbing out of the app
-    } else if (e.key === "ArrowLeft") {
+    } else if (e.ctrlKey && e.key === "ArrowLeft") {
       // Move to previous view
       let prevIndex = (currentIndex - 1 + views.length) % views.length;
       multiview.setValue(views[prevIndex].config.id);
@@ -97,6 +98,15 @@ webix.ready(function () {
       // Reload current view (or trigger an action)
       multiview.setValue(views[currentIndex].config.id);
     }
+    else if(e.altKey && e.key === "h") {
+      showView('home');
+    }
+    else if(e.altKey && e.key === "l") {
+      showView('login');
+    }
+    else if(e.altKey && e.key == "s") {
+      showView('signup');
+    }
   });
 
 

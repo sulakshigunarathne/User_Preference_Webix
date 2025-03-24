@@ -1,112 +1,5 @@
-// export const LoginPage = {
-//     id: "login",
-//     //css: "login-page",
-//     rows: [
-//       { gravity: 1 },
-//       {
-//         cols: [
-//           { gravity: 1 },
-          
-//           {
-//             view: "form",
-//             id: "login_form",
-//             //css: "login-container",
-//             borderless: true,
-//             width: Math.min(window.innerWidth * 0.8, 400),
-//             elements: [
-//               {
-//                 // Header with back button and title
-//                 view: "toolbar",
-//                 //css: "login-header",
-//                 height: 50,
-//                 borderless: true,
-//                 elements: [
-//                   {
-//                     view: "icon", 
-//                     icon: "wxi-arrow-left",
-//                     //css: "back-arrow",
-//                     click: function() {
-//                       showView("home");
-//                     }
-//                   },
-//                   {
-//                     view: "label", 
-//                     label: "Log in / Sign up", 
-//                     //css: "login-title",
-//                     align: "center"
-//                   },
-                  
-//                 ]
-//               },
-              
-//               {
-//                 view: "label",
-//                 label: "Email",
-//                 //css: "field-label"
-//               },
-//               {
-//                 view: "text",
-//                 name: "email",
-//                 //css: "dark-input",
-//                 placeholder: "Enter your Email",
-                
-//               },
-//                // Spacing
-//               {
-//                 view: "label",
-//                 label: "Password",
-//                 //css: "field-label"
-//               },
-//               {
-//                 view: "text",
-//                 type: "password",
-//                 name: "password",
-//                 //css: "dark-input",
-//                 placeholder: "Enter your Password",
-//                 height: 45
-//               },
-//               {
-//                 view: "template",
-//                 //css: "forgot-password-container",
-//                 template: "<a href='#' class='forgot-password'>Forgot Password?</a>",
-//                 height: 40,
-//                 borderless: true
-//               },
-//               {
-//                 view: "button",
-//                 value: "Log in",
-//                 //css: "login-button",
-//                 height: 50,
-//                 click: function() {
-//                   if ($$("login_form").validate()) {
-//                     // Handle login
-//                     webix.message("Login successful");
-//                     showView("home");
-//                   }
-//                 }
-//               },
-//               { height: 15 }, // Spacing
-//               {
-//                 view: "template",
-//                 //css: "signup-container",
-//                 template: "<div class='signup-text'>Create a Account. <a href='#' class='signup-link'>Sign up</a></div>",
-//                 height: 40,
-//                 borderless: true,
-//                 onClick: {
-//                   "signup-link": function() {
-//                     // Handle signup
-//                     webix.message("Redirecting to signup");
-//                   }
-//                 }
-//               }
-//             ]
-//           },
-//           { gravity: 1 } // Right margin (flexible)
-//         ]
-//       },
-//       { gravity: 1 } // Bottom spacing (flexible)
-//     ]
-//   };
+import { authenticateUser,updateUserProfile } from "../utils/dataService.js";
+import { isMobile } from "../utils/isMobile.js";
 
 export const LoginPage = {
   id: "login",
@@ -114,14 +7,17 @@ export const LoginPage = {
   type: "space",
   cols: [
     {
-      gravity: 1, // Allows dynamic resizing
-      hidden: isMobile(), // Hide empty space on small screens
+      gravity: 1,
+      hidden: isMobile(),
     },
     {
       view: "form",
       id: "login_form",
       borderless: true,
-      width: Math.min(window.innerWidth * 0.8, 400), // Adjusts width
+      width: 300,
+      minWidth: 300, // Ensure form is at least 300px wide
+      maxWidth: 400, // Limit form width to 400px
+      responsiveCell: false, // Prevent form from being hidden or moved
       elements: [
         {
           view: "toolbar",
@@ -133,25 +29,30 @@ export const LoginPage = {
               icon: "wxi-arrow-left",
               click: function () {
                 showView("home");
-              }
+              },
             },
             {
               view: "label",
-              label: "Log in / Sign up",
-              align: "center"
+              label: "Log in / Sign in",
+              align: "center",
             },
-          ]
+          ],
         },
         {
           view: "text",
           name: "email",
           placeholder: "Email",
+          required: true,
+          validate: webix.rules.isEmail,
+          invalidMessage: "Please enter a valid email address",
         },
         {
           view: "text",
           type: "password",
           name: "password",
           placeholder: "Password",
+          required: true,
+          invalidMessage: "Password cannot be empty",
         },
         {
           view: "template",
@@ -161,23 +62,48 @@ export const LoginPage = {
           onClick: {
             "forgot-password": function () {
               showView("forgotpassword");
-            }
-          }
+            },
+          },
         },
         {
           view: "button",
           value: "Log in",
           height: 50,
-          click: function () {
-            if ($$("login_form").validate()) {
-              // webix.message("Login successful");
-              // updateLoginState(true);
-              localStorage.setItem("loggedUser",true)
-              showView("home");
-              location.reload()
-              
+          click: async function () {
+            const form = $$("login_form");
+
+            if (!form.validate()) {
+              webix.message({ type: "error", text: "Please enter valid details." });
+              return;
             }
-          }
+
+            const values = form.getValues();
+            try {
+              const user = await authenticateUser(values.email, values.password);
+
+              if (user) {
+                localStorage.setItem("loggedUser", JSON.stringify(user));
+                webix.message({ type: "success", text: "Login successful!" });
+                updateUserProfile(user);
+                showView("home");
+                location.reload();
+              } else {
+                webix.modalbox({
+                  title: "Not Registered",
+                  text: "You are not registered. Want to create an account?",
+                  buttons: ["Cancel", "Sign Up"],
+                  callback: function (result) {
+                    if (result === 1) {
+                      webix.ui(SignUpPage);
+                    }
+                  },
+                });
+              }
+            } catch (error) {
+              console.error("Login Error:", error);
+              webix.message({ type: "error", text: "Login failed. Try again later." });
+            }
+          },
         },
         { height: 15 },
         {
@@ -187,20 +113,15 @@ export const LoginPage = {
           borderless: true,
           onClick: {
             "signup-link": function () {
-              showView("register");
-            }
-          }
-        }
-      ]
+              showView("signup");
+            },
+          },
+        },
+      ],
     },
     {
-      gravity: 1, // Balances layout
-      hidden: isMobile(), // Hide extra space on small screens
+      gravity: 1,
+      hidden: isMobile(),
     },
-  ]
+  ],
 };
-
-// Utility function to detect mobile devices
-function isMobile() {
-  return window.innerWidth <= 768; // Adjust threshold as needed
-}
