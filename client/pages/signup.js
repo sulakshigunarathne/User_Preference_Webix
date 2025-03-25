@@ -111,11 +111,17 @@ export const SignupPage = {
                       return;
                     }
 
-                    const addedUser = await addUser(newUser);
-                    localStorage.setItem("userProfile", JSON.stringify(addedUser));
-                    updateProfile(addedUser);
+                    //const addedUser = await addUser(newUser);
+                    // localStorage.setItem("userProfile", JSON.stringify(addedUser));
+                    // updateProfile(addedUser);
+                    const user = {
+                      email: newUser.email,
+                      password: newUser.password
+                    };
+                    sessionStorage.setItem("currentLoggedin", JSON.stringify({ email: user.email, password: user.password }));
+                    localStorage.setItem("loggedUser", JSON.stringify(user));
                     webix.message("Account created successfully");
-                    showView("home"); 
+                    showView("login"); 
                   } catch (error) {
                     console.error("Error registering user:", error);
                     webix.message({ type: "error", text: error.message });

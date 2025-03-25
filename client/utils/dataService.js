@@ -23,34 +23,46 @@ function addUser(newUser) {
   const users = getUsers();
   console.log("Users before adding:", users); // Debugging line
 
-  if (!Array.isArray(users)) {
-    console.error("Error: users is not an array!", users);
-    return;
-  }
-
   const newUserId = users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1;
 
   const formattedUser = {
     id: newUserId,
     fullName: `${newUser.first_name} ${newUser.last_name}`,
     email: newUser.email,
-    password: newUser.password, 
+    password: newUser.password,
   };
 
-  users.push(formattedUser); // <-- Error happens here if `users` is not an array
+  // Store the user in sessionStorage with email as the key
+  sessionStorage.setItem(newUser.email, JSON.stringify(formattedUser));
 
-  localStorage.setItem("usersData", JSON.stringify(users));
-
-  return formattedUser;
+  console.log("User added to session storage:", formattedUser);
 }
 
 
-
-// Authenticate user
 async function authenticateUser(email, password) {
-  const users = await getUsers();
-  return users.find(user => user.email === email && user.password === password);
+  // Check if the user is already logged in (in sessionStorage)
+  const storedUserData = JSON.parse(sessionStorage.getItem("currentLoggedin"));
+  console.log("storedUserEmail",storedUserData.email );
+  console.log("storedUserPassword",storedUserData.password);
+  if (storedUserData && storedUserData.email === email && storedUserData.password === password) {
+    return storedUserData; // User is authenticated from session storage
+  }
+
+  // If user is not found in sessionStorage, check the JSON file (fetch from 'dummydata' directory)
+  const users = await getUsers(); // Fetch users from JSON file
+  const user = users.find(u => u.email === email && u.password === password); // Search for the user
+
+  if (user) {
+    // If user is found in JSON file, store both email and password in sessionStorage for next login
+    sessionStorage.setItem("currentLoggedin", JSON.stringify({ email: user.email, password: user.password })); // Store both email and password
+    return user; // Return authenticated user
+  }
+
+  return null; // User does not exist in both sessionStorage and JSON file
 }
+
+
+
 
 // Validate user input
 function validateUserInput(user) {
@@ -78,6 +90,18 @@ function updateUserProfile(user) {
   localStorage.setItem("profile_email", user.email || "");
 
 }
-export { getUsers, addUser, authenticateUser, checkUserExists, validateUserInput, validateEmail, updateUserProfile };
+
+async function checkUserByEmail(email) {
+  try {
+    const users = await getUsers();
+    // Check if any user matches the given email
+    return users.find(user => user.email === email);
+  } catch (error) {
+    console.error("Error checking user by email:", error);
+    return null;
+  }
+}
+
+export { getUsers, addUser, authenticateUser, checkUserExists, validateUserInput, validateEmail, updateUserProfile, checkUserByEmail };
 
 

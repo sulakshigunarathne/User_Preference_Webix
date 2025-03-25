@@ -5,7 +5,8 @@ import { SignupPage } from "./pages/signup.js";
 import { ProfilePage } from "./pages/profile.js";
 import { NotificationPage } from "./pages/notifications.js";
 import { SettingsPage } from "./pages/settings.js";
-
+import { ForgotPasswordPage } from "./pages/forgotpassword.js";
+import { OtpVerificationPage } from "./pages/otpverify.js";
 
 webix.ready(function () {
   webix.ui({
@@ -24,7 +25,9 @@ webix.ready(function () {
             { id: "profile", ...ProfilePage },
             { id: "notifications", ...NotificationPage },
             { id: "settings", ...SettingsPage },
-          ]
+            { id: "forgotpassword", ...ForgotPasswordPage },
+            { id: "otpverification", ...OtpVerificationPage },
+          ],
         },
       },
     ],
@@ -63,30 +66,27 @@ webix.ready(function () {
     // let currentViewRows = currentView.config.body.rows;
     // console.log(currentViewRows, "currentViewRows");
     let isLogin = JSON.parse(localStorage.getItem("loggedUser")) || false;
-    if (!isLogin && (currentIndex!=0) && (currentIndex!=1) ){
-      if (currentIndex ==2 && e.key === "ArrowRight"){
-        currentIndex=-1
-      }
-      else if (currentIndex ==0 && e.key === "ArrowLeft"){
-        currentIndex=3
+    if (!isLogin && currentIndex != 0 && currentIndex != 1) {
+      if (currentIndex == 2 && e.key === "ArrowRight") {
+        currentIndex = -1;
+      } else if (currentIndex == 0 && e.key === "ArrowLeft") {
+        currentIndex = 3;
       }
     }
 
-    if(isLogin){
-      if (currentIndex ==0 && e.key === "ArrowRight"){
-        currentIndex=2
-      }
-      else if (currentIndex ==2 && e.key === "ArrowLeft"){
-        currentIndex=1
+    if (isLogin) {
+      if (currentIndex == 0 && e.key === "ArrowRight") {
+        currentIndex = 2;
+      } else if (currentIndex == 2 && e.key === "ArrowLeft") {
+        currentIndex = 1;
       }
     }
-      
-      
+
     if (e.ctrlKey && e.key === "ArrowRight") {
       // Move to next view
       let nextIndex = (currentIndex + 1) % views.length;
       multiview.setValue(views[nextIndex].config.id);
-      
+
       e.preventDefault(); // Prevent tabbing out of the app
     } else if (e.ctrlKey && e.key === "ArrowLeft") {
       // Move to previous view
@@ -97,18 +97,20 @@ webix.ready(function () {
     } else if (e.key === "Enter") {
       // Reload current view (or trigger an action)
       multiview.setValue(views[currentIndex].config.id);
+    } else if (e.altKey && e.key === "h") {
+      showView("home");
+    } else if (e.altKey && e.key === "l") {
+      showView("login");
+    } else if (e.altKey && e.key == "s") {
+      showView("signup");
     }
-    else if(e.altKey && e.key === "h") {
-      showView('home');
+
+    if (e.altKey && e.key === "a") {
+      showSettingsView("acc_settings"); // Navigate to Account Settings
+    } else if (e.altKey && e.key === "p") {
+      showSettingsView("pr_settings"); // Navigate to Privacy Settings
+    } else if (e.altKey && e.key === "n") {
+      showSettingsView("not_settings"); // Navigate to Notification Settings
     }
-    else if(e.altKey && e.key === "l") {
-      showView('login');
-    }
-    else if(e.altKey && e.key == "s") {
-      showView('signup');
-    }
   });
-
-
-
 });

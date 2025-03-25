@@ -3,7 +3,7 @@
     --text-color: #000000;
     --test-btn-color: #039c2f;
     --nav-text-color: #061e6a;
-    
+    --login-des-color: #0a0a0a;
 }
 
 .dark-mode {
@@ -11,6 +11,7 @@
     --text-color: #ffffff;
     --test-btn-color: #9c3b03;
     --nav-text-color: #fcfcfc;
+    --login-des-color: #ffffff;
    
 }
 
@@ -26,6 +27,10 @@
 .webix_view {
     background-color: var(--bg-color) !important;
     color: var(--text-color) !important;
+}
+
+.login-container .description {
+    color: var(--login-des-color) !important;
 }
 
 

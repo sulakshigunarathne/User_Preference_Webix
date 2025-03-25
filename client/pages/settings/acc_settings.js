@@ -618,63 +618,66 @@
 
 // pages/settings/acc_settings.js
 import DataValidation, { ValidationError } from '../../utils/profileDatavalidation.js';
+import { getUsers } from '../../utils/dataService.js';
 
-/**
- * Save user details to localStorage
- * @param {Object} data - User data to save
- * @returns {Object} Save operation result
- */
-export function saveUserDetailsToStorage(data) {
+
+
+async function fetchUserDetailsByEmail(email) {
     try {
-        // Validate the entire profile
-        const validatedData = DataValidation.validateFullProfile(data);
-
-        // Prepare data for storage
-        const userDetailsToSave = {
-            profile: validatedData.profile,
-            personal: validatedData.personal || {},
-            security: {
-                passwordChanged: !!validatedData.new_password
-            }
-        };
-
-        // Save to localStorage
-        localStorage.setItem('userDetails', JSON.stringify(userDetailsToSave));
+        const users = await getUsers();
+        const user = users.find(user => user.email === email);
         
-        return { 
-            success: true, 
-            message: 'User details saved successfully',
-            data: userDetailsToSave
+        if (!user) {
+            throw new Error(`User with email ${email} not found`);
+        }
+        
+        return {
+            fullName: user.fullName,
+            email: user.email,
+            password: user.password
         };
     } catch (error) {
-        console.error('Error saving user details:', error);
-        return { 
-            success: false, 
-            message: error instanceof ValidationError 
-                ? error.message 
-                : 'Failed to save user details',
-            error: error.message
-        };
+        console.error("Error fetching user details:", error);
+        return null;
     }
 }
 
-/**
- * Load user details from localStorage
- * @returns {Object|null} Loaded user details or null
- */
-export function loadUserDetailsFromStorage() {
+async function populateUserFormFields() {
+    const userEmail = sessionStorage.getItem("currentloggedin");
+    
+    if (!userEmail) {
+        console.error("No logged-in user found");
+        return;
+    }
+    
     try {
-        const savedData = localStorage.getItem('userDetails');
-        return savedData ? JSON.parse(savedData) : null;
+        const userData = await fetchUserDetailsByEmail(userEmail);
+        
+        if (userData && $$("profileSection")) {
+            // Update the form with fetched user data using setValues on the form
+            $$("profileSection").setValues({
+                full_name: userData.fullName || "",
+                email: userData.email || ""
+            });
+            
+            // Set password if the password section exists
+            if ($$("passwordSection")) {
+                $$("passwordSection").setValues({
+                    current_password: userData.password || ""
+                });
+            }
+            console.log("User form fields populated successfully");
+        } else {
+            console.error("Failed to load user details");
+        }
     } catch (error) {
-        console.error('Error loading user details:', error);
-        return null;
+        console.error("Error populating form fields:", error);
     }
 }
 
 // Account Settings Configuration
 export const AccSettings = {
-    id: "acc_settings2",
+    id: "acc_settings",
     responsive: true,
     type: "clean",
     rows: [
@@ -839,7 +842,7 @@ export const AccSettings = {
                                                                                     required: true,
                                                                                     height: 40,
                                                                                     bottomPadding: 15,
-                                                                                    value: localStorage.getItem("profile_full_name") || ""
+                                                                                    //value: localStorage.getItem("profile_full_name") || ""
                                                                                 },
                                                                                 
                                                                                 { 
@@ -854,7 +857,7 @@ export const AccSettings = {
                                                                                     disabled: true,
                                                                                     height: 40,
                                                                                     bottomPadding: 15,
-                                                                                    value: localStorage.getItem("profile_email") || "user@example.com"
+                                                                                    // value: localStorage.getItem("profile_email") || "user@example.com"
                                                                                 },
                                                                                 
                                                                                 { 
@@ -1217,9 +1220,16 @@ export const AccSettings = {
                 const isMobile = window.innerWidth <= 768;
                 const menuToggle = $$("mobile_menu_toggle");
                 
-                if (menuToggle) {
-                    isMobile ? menuToggle.show() : menuToggle.hide();
-                }
+                console.log("Window width:", window.innerWidth);
+                console.log("Is mobile:", isMobile);
+                console.log("Menu toggle exists:", !!menuToggle);
+    
+            if (menuToggle) {
+                console.log("Setting visibility:", isMobile);
+                isMobile ? menuToggle.show() : menuToggle.hide();
+    } else {
+        console.error("mobile_menu_toggle element not found");
+    }
             };
             
             // Keyboard Navigation
@@ -1253,6 +1263,10 @@ export const AccSettings = {
             
             // Add resize listener
             window.addEventListener("resize", handleResponsive);
+
+            
+            // Call populateUserFormFields to fetch and populate user data from users.json
+            populateUserFormFields();
 
             // Load saved data if available
             const savedData = loadUserDetailsFromStorage();
