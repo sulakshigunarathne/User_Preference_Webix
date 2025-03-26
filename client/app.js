@@ -3,12 +3,13 @@ import { HomePage } from "./pages/home.js";
 import { LoginPage } from "./pages/login.js";
 import { SignupPage } from "./pages/signup.js";
 import { ProfilePage } from "./pages/profile.js";
-import { NotificationPage } from "./pages/notifications.js";
 import { SettingsPage } from "./pages/settings.js";
 import { ForgotPasswordPage } from "./pages/forgotpassword.js";
 import { OtpVerificationPage } from "./pages/otpverify.js";
 
 webix.ready(function () {
+  let isDarkMode = false;
+
   webix.ui({
     container: "app",
     rows: [
@@ -23,7 +24,6 @@ webix.ready(function () {
             { id: "login", ...LoginPage },
             { id: "signup", ...SignupPage },
             { id: "profile", ...ProfilePage },
-            { id: "notifications", ...NotificationPage },
             { id: "settings", ...SettingsPage },
             { id: "forgotpassword", ...ForgotPasswordPage },
             { id: "otpverification", ...OtpVerificationPage },
@@ -53,34 +53,18 @@ webix.ready(function () {
       webix.skin.set("material");
       document.body.classList.remove("dark-mode");
     }
+    isDarkMode = isDark; 
   };
 
-  // *Keyboard Navigation*
+  // Keyboard Navigation
   webix.event(document, "keydown", function (e) {
     const multiview = $$("mainView");
     const views = multiview.getChildViews();
     let currentIndex = views.findIndex(
       (view) => view.config.id === multiview.getValue()
     );
-    // let currentView = views[currentIndex];
-    // let currentViewRows = currentView.config.body.rows;
-    // console.log(currentViewRows, "currentViewRows");
+    
     let isLogin = JSON.parse(localStorage.getItem("loggedUser")) || false;
-    if (!isLogin && currentIndex != 0 && currentIndex != 1) {
-      if (currentIndex == 2 && e.key === "ArrowRight") {
-        currentIndex = -1;
-      } else if (currentIndex == 0 && e.key === "ArrowLeft") {
-        currentIndex = 3;
-      }
-    }
-
-    if (isLogin) {
-      if (currentIndex == 0 && e.key === "ArrowRight") {
-        currentIndex = 2;
-      } else if (currentIndex == 2 && e.key === "ArrowLeft") {
-        currentIndex = 1;
-      }
-    }
 
     if (e.ctrlKey && e.key === "ArrowRight") {
       // Move to next view
@@ -111,6 +95,10 @@ webix.ready(function () {
       showSettingsView("pr_settings"); // Navigate to Privacy Settings
     } else if (e.altKey && e.key === "n") {
       showSettingsView("not_settings"); // Navigate to Notification Settings
+    }
+
+    if (e.altKey && e.key === "t") {
+      toggleTheme(!isDarkMode);
     }
   });
 });

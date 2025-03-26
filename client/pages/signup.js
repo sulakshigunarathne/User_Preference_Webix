@@ -3,7 +3,6 @@ import { addUser, checkUserExists } from "../utils/dataService.js";
 
 export const SignupPage = {
   id: "signup",
-  css: "signup-page",
   rows: [
     { gravity: 1 },
     {
@@ -12,20 +11,17 @@ export const SignupPage = {
         {
           view: "form",
           id: "signup_form",
-          css: "signup-container",
           borderless: true,
           width: Math.min(window.innerWidth * 0.8, 400),
           elements: [
             {
               view: "toolbar",
-              css: "signup-header",
               height: 50,
               borderless: true,
               elements: [
                 {
                   view: "icon",
                   icon: "wxi-arrow-left",
-                  css: "back-arrow",
                   click: function () {
                     showView("home");
                   }
@@ -33,7 +29,6 @@ export const SignupPage = {
                 {
                   view: "label",
                   label: "Sign Up",
-                  css: "signup-title",
                   align: "center"
                 },
               ]
@@ -65,7 +60,6 @@ export const SignupPage = {
               type: "password",
               name: "password",
               id: "password_input",
-              css: "dark-input",
               placeholder: "Password",
               required: true,
               validate: function (value) {
@@ -85,7 +79,6 @@ export const SignupPage = {
             {
               view: "template",
               id: "password_error",
-              css: "password-error",
               borderless: true,
               height: 20,
               template: ""
@@ -93,7 +86,6 @@ export const SignupPage = {
             {
               view: "button",
               value: "Sign Up",
-              css: "signup-button",
               height: 50,
               click: async function () {
                 if ($$("signup_form").validate()) {
@@ -118,6 +110,7 @@ export const SignupPage = {
                       email: newUser.email,
                       password: newUser.password
                     };
+
                     sessionStorage.setItem("currentLoggedin", JSON.stringify({ email: user.email, password: user.password }));
                     localStorage.setItem("loggedUser", JSON.stringify(user));
                     webix.message("Account created successfully");
@@ -134,7 +127,6 @@ export const SignupPage = {
             { height: 15 },
             {
               view: "template",
-              css: "login-container",
               template: "<div class='login-text'>Already have an account? <a href='#' class='login-link'>Log in</a></div>",
               height: 40,
               borderless: true,

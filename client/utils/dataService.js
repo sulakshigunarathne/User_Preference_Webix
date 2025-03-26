@@ -40,12 +40,18 @@ function addUser(newUser) {
 
 
 async function authenticateUser(email, password) {
+
   // Check if the user is already logged in (in sessionStorage)
   const storedUserData = JSON.parse(sessionStorage.getItem("currentLoggedin"));
-  console.log("storedUserEmail",storedUserData.email );
-  console.log("storedUserPassword",storedUserData.password);
+  //console.log("storedUserEmail",storedUserData.email );
+  //console.log("storedUserPassword",storedUserData.password);
+
   if (storedUserData && storedUserData.email === email && storedUserData.password === password) {
+    //console.log("entered storedUserData");
     return storedUserData; // User is authenticated from session storage
+  }
+  else if (storedUserData && storedUserData.email === email && storedUserData.password !== password) {
+    return "invalid_password"; // Password does not match
   }
 
   // If user is not found in sessionStorage, check the JSON file (fetch from 'dummydata' directory)
@@ -53,12 +59,18 @@ async function authenticateUser(email, password) {
   const user = users.find(u => u.email === email && u.password === password); // Search for the user
 
   if (user) {
-    // If user is found in JSON file, store both email and password in sessionStorage for next login
-    sessionStorage.setItem("currentLoggedin", JSON.stringify({ email: user.email, password: user.password })); // Store both email and password
-    return user; // Return authenticated user
+    if (user.password === password) {
+      // console.log("User found in JSON data");
+      sessionStorage.setItem("currentLoggedin", JSON.stringify({ email: user.email, password: user.password })); // Store credentials
+      return user; 
+    } else {
+      console.log("Invalid password (JSON data)");
+      return "invalid_password"; 
+    }
   }
 
-  return null; // User does not exist in both sessionStorage and JSON file
+
+  return null; 
 }
 
 

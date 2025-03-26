@@ -88,98 +88,149 @@ import { PrSettings } from "./settings/pr_settings.js";
 export const SettingsPage = {
     id: "settings",
     responsive: true,
-    type: "space",
-    cols: [
+    type: "clean",
+    rows: [
         {
-            view: "layout",
-            id: "settingsMenuWrapper",
-            rows: [
+            view: "toolbar",
+            responsive: true,
+            cols: [
                 {
                     view: "icon",
-                    id: "hamburgerMenu",
                     icon: "bars",
+                    id: "mobileMenuToggle",
                     hidden: true,
+                    width: 50,
                     click: function() {
-                        let popup = $$("settingsPopup");
-                        if (popup.isVisible()) {
-                            popup.hide();
-                        } else {
-                            popup.show(this.$view);
-                        }
+                        $$("settingsMobileMenu").toggle();
                     }
                 },
-                {
-                    view: "list",
-                    id: "settingsMenu",
-                    data: [
-                        { id: "acc_settings", value: "Account" },
-                        { id: "pr_settings", value: "Privacy" },
-                        { id: "not_settings", value: "Notification" }
+                { 
+                    view: "segmented", 
+                    id: "settingsNavigation",
+                    multiview: true,
+                    options: [
+                        { value: "Account", id: "acc_settings" },
+                        { value: "Privacy", id: "pr_settings" },
+                        { value: "Notifications", id: "not_settings" }
                     ],
-                    ready: function() {
-                        this.select(this.getFirstId());
-                    },
                     on: {
-                        onItemClick: function(id) {
-                            let selectedItem = this.getItem(id);
-                            showSettingsView(selectedItem.id);
+                        onChange: function(newv) {
+                            $$("settingsMultiview").setValue(newv);
                         }
-                    },
-                    select: true,
-                    scroll: false,
-                    width: 120
+                    }
                 }
             ]
         },
         {
-            view: "scrollview",
-            body: {
-                view: "multiview",
-                id: "settingsView",
-                cells: [
-                    { id: "acc_settings", ...AccSettings },
-                    { id: "pr_settings", ...PrSettings },
-                    { id: "not_settings", ...NotSettings },
-                ]
-            }
+            view: "multiview", 
+            id: "settingsMultiview",
+            cells: [
+                { 
+                    id: "acc_settings", 
+                    ...AccSettings,
+                    responsive: true
+                },
+                { 
+                    id: "pr_settings", 
+                    ...PrSettings,
+                    responsive: true
+                },
+                { 
+                    id: "not_settings", 
+                    ...NotSettings,
+                    responsive: true
+                }
+            ]
         }
     ],
+    // Responsive configuration
+    responsiveConfig: {
+        mobile: {
+            breakpoint: 600,
+            params: {
+                layout: {
+                    type: "space"
+                }
+            }
+        },
+        tablet: {
+            breakpoint: 1024,
+            params: {
+                layout: {
+                    type: "wide"
+                }
+            }
+        }
+    },
+    
+    // Dynamic responsiveness handler
     on: {
-        onViewResize: function() {
-            let menu = $$("settingsMenu");
-            let hamburger = $$("hamburgerMenu");
-            if (window.innerWidth < 700) {
-                menu.hide();
-                hamburger.show();
+        onAfterRender: function() {
+            // Manage mobile menu visibility
+            const width = this.getParentView().config.width || window.innerWidth;
+            const mobileMenuToggle = $$("mobileMenuToggle");
+            const settingsNavigation = $$("settingsNavigation");
+
+            if (width < 600) {
+                // Mobile view
+                mobileMenuToggle.show();
+                settingsNavigation.hide();
             } else {
-                menu.show();
-                hamburger.hide();
+                // Desktop/Tablet view
+                mobileMenuToggle.hide();
+                settingsNavigation.show();
             }
         }
     }
 };
 
-// Popup for mobile menu
+// Mobile menu popup for small screens
 webix.ui({
     view: "popup",
-    id: "settingsPopup",
-    width: 200,
+    id: "settingsMobileMenu",
+    width: 250,
     body: {
         view: "list",
+        select: true,
         data: [
-            { id: "acc_settings", value: "Account" },
-            { id: "pr_settings", value: "Privacy" },
-            { id: "not_settings", value: "Notification" }
+            { id: "acc_settings", value: "Account", icon: "user" },
+            { id: "pr_settings", value: "Privacy", icon: "lock" },
+            { id: "not_settings", value: "Notifications", icon: "bell" }
         ],
+        template: "<div class='mobile-menu-item'><span class='webix_icon fa-#icon#'></span> #value#</div>",
         on: {
             onItemClick: function(id) {
-                showSettingsView(id);
-                $$("settingsPopup").hide();
+                $$("settingsNavigation").setValue(id);
+                $$("settingsMultiview").setValue(id);
+                $$("settingsMobileMenu").hide();
             }
         }
     }
 });
 
-window.showSettingsView = function(viewId) {
-    $$("settingsView").setValue(viewId);
-};
+// Optional: Add responsive CSS
+webix.html.addStyle(`
+    .mobile-menu-item {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+    }
+    .mobile-menu-item .webix_icon {
+        margin-right: 10px;
+    }
+`);
+
+// Utility function for view switching
+function switchSettingsView(viewId) {
+    try {
+        const settingsMultiview = $$("settingsMultiview");
+        const settingsNavigation = $$("settingsNavigation");
+        
+        if (settingsMultiview && settingsNavigation) {
+            settingsMultiview.setValue(viewId);
+            settingsNavigation.setValue(viewId);
+        }
+    } catch (error) {
+        console.error("Error switching settings view:", error);
+    }
+}

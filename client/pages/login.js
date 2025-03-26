@@ -3,21 +3,21 @@ import { isMobile } from "../utils/isMobile.js";
 
 export const LoginPage = {
   id: "login",
-  responsive: true,
+  //responsive: true,
   type: "space",
+  rows:[ {gravity:1},
+  {
   cols: [
     {
       gravity: 1,
-      hidden: isMobile(),
     },
     {
       view: "form",
       id: "login_form",
       borderless: true,
-      // width: 300,
-      // minWidth: 300, // Ensure form is at least 300px wide
-      maxWidth: 400, // Limit form width to 400px
-      responsiveCell: false, // Prevent form from being hidden or moved
+      width: Math.min(window.innerWidth * 0.8, 400),
+      // maxWidth: 400, // Limit form width to 400px
+      // responsiveCell: false, // Prevent form from being hidden or moved
       elements: [
         {
           view: "toolbar",
@@ -84,24 +84,11 @@ export const LoginPage = {
             try {
               const user = await authenticateUser(
                 values.email,
-                values.password
+                values.password,
               );
+              console.log("formemail:", values.email);
 
               if (user === null) {
-                // User does not exist
-                // webix.modalbox({
-                //   title: "Not Registered",
-                //   text: "You are not registered. Want to create an account?",
-                //   buttons: ["Cancel", "Sign Up"],
-                //   callback: function (result) {
-                //     console.log("Modal result:", result);
-                //     if (result === 1) {
-                //       setTimeout(() => {
-                //         window.showView("signup");  // Trigger the navigation to signup page
-                //     }, 10);  // Small delay to ensure modal transition is complete
-                //     }
-                //   },
-                // });
                 webix.modalbox({
                   title: "Not Registered",
                   text: "You are not registered. Redirecting to Sign Up page...",
@@ -149,11 +136,17 @@ export const LoginPage = {
             },
           },
         },
+        {gravity: 1},
       ],
     },
     {
       gravity: 1,
-      hidden: isMobile(),
+      // hidden: isMobile(),
     },
   ],
+},
+{
+  gravity:1
+}
+],
 };
