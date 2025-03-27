@@ -331,10 +331,6 @@ window.toggleAccentColor = function (color) {
   
     `;
   
-    // Redraw all Webix UI components to apply new styles
-    // webix.ui.each(function(view) {
-    //   if (view.refresh) view.refresh();
-    // });
   
     // Update body attribute for tracking
     document.body.setAttribute('data-accent-color', color);

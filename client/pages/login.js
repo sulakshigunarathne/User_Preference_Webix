@@ -3,7 +3,6 @@ import { isMobile } from "../utils/isMobile.js";
 
 export const LoginPage = {
   id: "login",
-  //responsive: true,
   type: "space",
   rows:[ {gravity:1},
   {
@@ -141,7 +140,6 @@ export const LoginPage = {
     },
     {
       gravity: 1,
-      // hidden: isMobile(),
     },
   ],
 },

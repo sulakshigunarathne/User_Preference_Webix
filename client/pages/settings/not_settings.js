@@ -268,7 +268,6 @@ export const NotSettings = {
                 const form = $$("notificationForm");
                 if (form) {
                   const values = form.getValues();
-                  // save these values to your backend here
                   console.log("Saving settings:", values);
                   webix.message({
                     type: "success",

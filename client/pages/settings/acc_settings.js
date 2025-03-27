@@ -66,9 +66,9 @@ export const AccSettings = {
                                 ? savedImage
                                 : "https://dummyimage.com/150"; // Load saved image or default one
                               return `<div style="text-align:center;">
-                                                                                            <img id="profile-img" src="${imageUrl}" 
-                                                                                            style="width:120px; height:120px; border-radius:50%; border:2px solid #ccc; object-fit:cover;">
-                                                                                        </div>`;
+                             <img id="profile-img" src="${imageUrl}" 
+                              style="width:120px; height:120px; border-radius:50%; border:2px solid #ccc; object-fit:cover;">
+                               </div>`;
                             },
                             height: 140,
                           },
@@ -530,7 +530,6 @@ export const AccSettings = {
                             text: saveResult.message,
                             expire: 3000,
                           });
-                          
                         } else {
                           webix.message({
                             type: "error",
@@ -605,7 +604,6 @@ export const AccSettings = {
             break;
         }
       });
-
 
       // Call populateUserFormFields to fetch and populate user data from users.json
       populateUserFormFields();
