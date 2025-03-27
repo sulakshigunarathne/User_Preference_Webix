@@ -2,8 +2,10 @@ const USERS_FILE = "/dummydata/users.json";
 
 //Fetch users from the JSON file
 async function getUsers() {
+  console.log("entered get user")
   try {
     const response = await fetch(USERS_FILE);
+    console.log("response",response)
     if (!response.ok) throw new Error("Failed to fetch users");
     return await response.json();
   } catch (error) {
@@ -56,8 +58,8 @@ async function authenticateUser(email, password) {
 
   // If user is not found in sessionStorage, check the JSON file (fetch from 'dummydata' directory)
   const users = await getUsers(); // Fetch users from JSON file
-  const user = users.find(u => u.email === email && u.password === password); // Search for the user
-
+  const user = users.find(u => u.email === email); // Search for the user
+  console.log("user",user)
   if (user) {
     if (user.password === password) {
       // console.log("User found in JSON data");
@@ -72,8 +74,6 @@ async function authenticateUser(email, password) {
 
   return null; 
 }
-
-
 
 
 // Validate user input
@@ -114,6 +114,156 @@ async function checkUserByEmail(email) {
   }
 }
 
-export { getUsers, addUser, authenticateUser, checkUserExists, validateUserInput, validateEmail, updateUserProfile, checkUserByEmail };
+async function updateUser(userId, updatedData) {
+  try {
+    const users = await getUsers();
+    const index = users.findIndex(u => u.id === userId);
+    
+    if (index === -1) throw new Error("User not found");
+    
+    users[index] = { ...users[index], ...updatedData };
+    
+    if(sessionStorage.getItem("currentLoggedin")) {
+      sessionStorage.setItem("currentLoggedin", JSON.stringify(users[index]));
+    }
+    
+    return users[index];
+  } catch (error) {
+    console.error("Error updating user:", error);
+    throw error;
+  }
+}
+
+async function saveProfileData(userId, profileData) {
+  try {
+    // Update local storage
+    localStorage.setItem(`userProfile_${userId}`, JSON.stringify(profileData));
+    
+    // Update server data (mock implementation)
+    const users = await getUsers();
+    const user = users.find(u => u.id === userId);
+    
+    if (user) {
+      user.profile = profileData;
+      // Here you would typically make a PUT request to update the server data
+    }
+    
+    return profileData;
+  } catch (error) {
+    console.error("Error saving profile:", error);
+    throw error;
+  }
+}
+
+// Fetch user details by email
+async function fetchUserDetailsByEmail(email) {
+  try {
+    // Fetch user details from getUsers() first
+    const users = await getUsers();
+    const user = users.find((user) => user.email === email);
+
+    // If user is found in getUsers(), return the details
+    if (user) {
+      return {
+        fullName: user.fullName,
+        email: user.email,
+        password: user.password,
+        address: user.address,
+        phone: user.phone,
+        gender: user.gender,
+        marital_status: user.marital_status,
+        date_of_birth: user.dob,
+        occupation: user.occupation,
+      };
+    }
+
+    // If no user found from getUsers(), check sessionStorage
+    const storedData = sessionStorage.getItem("currentLoggedin");
+
+    // If data is found in sessionStorage, return it
+    if (storedData) {
+      return {
+        email: JSON.parse(storedData).email,
+        password: JSON.parse(storedData).password,
+      };
+    }
+
+    // If no user found in both sources, return null
+    return null;
+  } catch (error) {
+    console.error("Error fetching user details:", error);
+    return null;
+  }
+}
+
+
+// Populate user form fields
+async function populateUserFormFields() {
+  const storedData = sessionStorage.getItem("currentLoggedin");
+  const userEmail = storedData ? JSON.parse(storedData).email : null;
+  console.log("User email:", userEmail);
+
+  if (!userEmail) {
+    console.log("No logged-in user found");
+    return;
+  }
+
+  try {
+    const userData = await fetchUserDetailsByEmail(userEmail);
+
+    if (userData) {
+      if ($$("profileSection")) {
+        $$("profileSection").setValues({
+          full_name: userData.fullName || "",
+          email: userData.email || "",
+          phone: userData.phone || "",
+        });
+      }
+      
+      if ($$("personalSection")) {
+        $$("personalSection").setValues({
+          address: userData.address || "",
+          date_of_birth: userData.date_of_birth || "",
+          gender: mapGender(userData.gender),
+        marital_status: mapMaritalStatus(userData.marital_status),
+          occupation: userData.occupation
+
+        });
+      }
+      
+      console.log("User form fields populated successfully");
+    } else {
+      console.log("Failed to load user details");
+    }
+  } catch (error) {
+    console.log("Error populating form fields:", error);
+  }
+}
+function mapGender(gender) {
+  const genderMap = {
+      "Male": "male",
+      "Female": "female",
+      "Other": "other"
+  };
+  return genderMap[gender] || ""; 
+}
+
+function mapMaritalStatus(status) {
+  const statusMap = {
+      "Single": "single",
+      "Married": "married",
+      "Divorced": "divorced",
+      "Widowed": "widowed",
+      "Other": "other"
+  };
+  return statusMap[status] || ""; 
+}
+
+function saveUserDetailsToStorage(combinedData) {
+  return { success: true, message: "User details saved successfully!" };
+}
+
+
+export { getUsers, addUser, authenticateUser, checkUserExists, validateUserInput, validateEmail, updateUserProfile, checkUserByEmail, updateUser, saveProfileData,fetchUserDetailsByEmail, populateUserFormFields, saveUserDetailsToStorage };
 
 

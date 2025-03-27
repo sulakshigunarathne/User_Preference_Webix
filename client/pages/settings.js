@@ -84,6 +84,7 @@
 import { AccSettings } from "./settings/acc_settings.js";
 import { NotSettings } from "./settings/not_settings.js";
 import { PrSettings } from "./settings/pr_settings.js";
+import {ThemeSettings} from "./settings/theme_settings.js";
 
 export const SettingsPage = {
     id: "settings",
@@ -111,7 +112,8 @@ export const SettingsPage = {
                     options: [
                         { value: "Account", id: "acc_settings" },
                         { value: "Privacy", id: "pr_settings" },
-                        { value: "Notifications", id: "not_settings" }
+                        { value: "Notifications", id: "not_settings" },
+                        {value: "Appearance", id:"theme_settings"}
                     ],
                     on: {
                         onChange: function(newv) {
@@ -138,6 +140,11 @@ export const SettingsPage = {
                 { 
                     id: "not_settings", 
                     ...NotSettings,
+                    responsive: true
+                },
+                { 
+                    id: "theme_settings", 
+                    ...ThemeSettings,
                     responsive: true
                 }
             ]
@@ -195,7 +202,8 @@ webix.ui({
         data: [
             { id: "acc_settings", value: "Account", icon: "user" },
             { id: "pr_settings", value: "Privacy", icon: "lock" },
-            { id: "not_settings", value: "Notifications", icon: "bell" }
+            { id: "not_settings", value: "Notifications", icon: "bell" },
+            { id: "theme_settings", value: "Appearance", icon: "paint-brush" }
         ],
         template: "<div class='mobile-menu-item'><span class='webix_icon fa-#icon#'></span> #value#</div>",
         on: {
@@ -234,3 +242,29 @@ function switchSettingsView(viewId) {
         console.error("Error switching settings view:", error);
     }
 }
+
+window.showsettingsView = function (viewId) {
+    $$("settingsView").setValue(viewId);
+};
+
+if ($$("settings")) {
+    $$("settings").attachEvent("onKeyPress", function (key, e) {
+      switch (key) {
+        case 65: // 'A' key
+          if (e.altKey) {
+            showSettingsView("acc_settings");
+          }
+          break;
+        case 80: // 'P' key
+          if (e.altKey) {
+            showSettingsView("pr_settings");
+          }
+          break;
+        case 78: // 'N' key
+          if (e.altKey) {
+            showSettingsView("not_settings");
+          }
+          break;
+      }
+    });
+  }

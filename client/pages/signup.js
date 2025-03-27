@@ -21,7 +21,7 @@ export const SignupPage = {
               elements: [
                 {
                   view: "icon",
-                  icon: "wxi-arrow-left",
+                  icon: "wxi-angle-left",
                   click: function () {
                     showView("home");
                   }

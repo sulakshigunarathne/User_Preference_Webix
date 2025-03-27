@@ -4,6 +4,20 @@ export const NotSettings = {
   adaptivity: true,
   type: "clean",
 
+  defaultValues: {
+    email_notifications: true,
+    sms_notifications: false,
+    push_notifications: true,
+    newsletter_subscriptions: false,
+    notification_sound: "default",
+    sound_mode: "keep",
+    text_preview: true,
+    media_preview: true,
+    mute_notifications: false,
+    message_tone: "Default",
+    group_tone: "Default"
+  },
+
   rows: [
     {
       template:
@@ -233,6 +247,7 @@ export const NotSettings = {
                     sound_mode: "keep",
                     message_tone: "Default",
                     group_tone: "Default",
+                  
                   });
                   webix.message("Settings reset to default");
                 }
@@ -253,7 +268,7 @@ export const NotSettings = {
                 const form = $$("notificationForm");
                 if (form) {
                   const values = form.getValues();
-                  // You would typically save these values to your backend here
+                  // save these values to your backend here
                   console.log("Saving settings:", values);
                   webix.message({
                     type: "success",

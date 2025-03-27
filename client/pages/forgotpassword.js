@@ -30,7 +30,7 @@ export const ForgotPasswordPage = {
                   cols: [
                     {
                       view: "icon",
-                      icon: "wxi-arrow-left",
+                      icon: "wxi-angle-left",
                       css: "back-arrow",
                       click: function () {
                         showView("login"); // Navigate back to the login page

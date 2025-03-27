@@ -26,7 +26,7 @@ export const LoginPage = {
           elements: [
             {
               view: "icon",
-              icon: "wxi-arrow-left",
+              icon: "wxi-angle-left",
               click: function () {
                 showView("home");
               },
@@ -86,7 +86,7 @@ export const LoginPage = {
                 values.email,
                 values.password,
               );
-              console.log("formemail:", values.email);
+              console.log("formemail:", user);
 
               if (user === null) {
                 webix.modalbox({

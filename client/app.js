@@ -2,7 +2,6 @@ import { Navbar } from "./components/navbar.js";
 import { HomePage } from "./pages/home.js";
 import { LoginPage } from "./pages/login.js";
 import { SignupPage } from "./pages/signup.js";
-import { ProfilePage } from "./pages/profile.js";
 import { SettingsPage } from "./pages/settings.js";
 import { ForgotPasswordPage } from "./pages/forgotpassword.js";
 import { OtpVerificationPage } from "./pages/otpverify.js";
@@ -23,7 +22,6 @@ webix.ready(function () {
             { id: "home", ...HomePage },
             { id: "login", ...LoginPage },
             { id: "signup", ...SignupPage },
-            { id: "profile", ...ProfilePage },
             { id: "settings", ...SettingsPage },
             { id: "forgotpassword", ...ForgotPasswordPage },
             { id: "otpverification", ...OtpVerificationPage },
@@ -87,14 +85,6 @@ webix.ready(function () {
       showView("login");
     } else if (e.altKey && e.key == "s") {
       showView("signup");
-    }
-
-    if (e.altKey && e.key === "a") {
-      showSettingsView("acc_settings"); // Navigate to Account Settings
-    } else if (e.altKey && e.key === "p") {
-      showSettingsView("pr_settings"); // Navigate to Privacy Settings
-    } else if (e.altKey && e.key === "n") {
-      showSettingsView("not_settings"); // Navigate to Notification Settings
     }
 
     if (e.altKey && e.key === "t") {

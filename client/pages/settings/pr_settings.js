@@ -30,6 +30,7 @@ export const PrSettings = {
                             label: "Profile Picture Visibility",
                             name: "profile_pic_visibility",
                             labelPosition: "top",
+                            value: "everyone",
                             options: [
                                 { id: "everyone", value: "Everyone" },
                                 { id: "friends", value: "Friends Only" },
@@ -41,6 +42,7 @@ export const PrSettings = {
                             label: "Who can download or save your profile picture",
                             name: "profile_pic_download",
                             labelPosition: "top",
+                            value: "everyone",
                             options: [
                                 { id: "no_one", value: "No One" },
                                 { id: "friends", value: "Friends Only" },
@@ -65,6 +67,7 @@ export const PrSettings = {
                             label: "Profile Visibility",
                             name: "account_privacy",
                             labelPosition: "top",
+                            value: "everyone",
                             options: [
                                 { id: "public", value: "Public" },
                                 { id: "friends", value: "Friends Only" },
@@ -76,6 +79,7 @@ export const PrSettings = {
                             label: "Who can send you connection requests",
                             name: "connection_requests",
                             labelPosition: "top",
+                            value: "everyone",
                             options: [
                                 { id: "everyone", value: "Everyone" },
                                 { id: "friends_of_friends", value: "Friends of Friends" },
@@ -105,25 +109,29 @@ export const PrSettings = {
                             view: "checkbox",
                             labelRight: "Allow search engines to index my profile",
                             name: "search_engine_visibility",
-                            labelWidth: 0
+                            labelWidth: 0,
+                            value:0,
                         },
                         {
                             view: "checkbox",
                             labelRight: "Allow third-party apps to access my data",
                             name: "third_party_access",
-                            labelWidth: 0
+                            labelWidth: 0,
+                            value:0,
                         },
                         {
                             view: "checkbox",
                             labelRight: "Show my active status",
                             name: "active_status_visibility",
-                            labelWidth: 0
+                            labelWidth: 0,
+                            value:0,
                         },
                         {
                             view: "checkbox",
                             labelRight: "Allow profile views tracking",
                             name: "profile_view_tracking",
-                            labelWidth: 0
+                            labelWidth: 0,
+                            value:0,
                         }
                     ]
                 },
@@ -143,6 +151,7 @@ export const PrSettings = {
                             label: "Data Retention Period",
                             name: "data_retention",
                             labelPosition: "top",
+                            value: "1_month",
                             options: [
                                 { id: "1_month", value: "1 Month" },
                                 { id: "3_months", value: "3 Months" },
@@ -156,6 +165,7 @@ export const PrSettings = {
                             label: "Data Export Options",
                             name: "data_export",
                             labelPosition: "top",
+                            value: "full",
                             options: [
                                 { id: "full", value: "Full Export" },
                                 { id: "minimal", value: "Minimal Export" },
@@ -198,15 +208,42 @@ export const PrSettings = {
                             text: "Are you sure you want to reset all privacy settings to default?",
                             callback: function(result) {
                                 if (result) {
+                                    // Reset profile picture settings
+                                    $$("profile-picture-settings").setValues({
+                                        profile_pic_visibility: "everyone",
+                                        profile_pic_download: "everyone"
+                                    });
+                
+                                    // Reset account privacy settings
+                                    $$("account-privacy").setValues({
+                                        account_privacy: "public",
+                                        connection_requests: "everyone"
+                                    });
+                
+                                    // Reset data sharing preferences
+                                    $$("data-sharing-preferences").setValues({
+                                        search_engine_visibility: 0,
+                                        third_party_access: 0,
+                                        active_status_visibility: 0,
+                                        profile_view_tracking: 0
+                                    });
+                
+                                    // Reset advanced privacy controls
+                                    $$("advanced-privacy-controls").setValues({
+                                        data_retention: "1_month",
+                                        data_export: "full"
+                                    });
+                
                                     webix.message({
-                                        type: "warning",
+                                        type: "success",
                                         text: "Privacy settings reset to default!"
                                     });
                                 }
                             }
                         });
                     }
-                },
+                }
+,                
                 { gravity: 1 }
             ]
         }

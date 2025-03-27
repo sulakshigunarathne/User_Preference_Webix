@@ -21,7 +21,7 @@ export const OtpVerificationPage = {
                 elements: [
                   {
                     view: "icon",
-                    icon: "wxi-arrow-left",
+                    icon: "wxi-angle-left",
                     css: "back-arrow",
                     click: function () {
                       showView("forgotpassword"); 

@@ -1,62 +1,8 @@
-import DataValidation, {
-  ValidationError,
-} from "../../utils/profileDatavalidation.js";
-import { getUsers } from "../../utils/dataService.js";
-
-async function fetchUserDetailsByEmail(email) {
-  try {
-    const users = await getUsers();
-    const user = users.find((user) => user.email === email);
-
-    if (!user) {
-      //throw new Error(`User with email ${email} not found`);
-      return null;
-    }
-
-    return {
-      fullName: user.fullName,
-      email: user.email,
-      password: user.password,
-    };
-  } catch (error) {
-    console.error("Error fetching user details:", error);
-    return null;
-  }
-}
-
-async function populateUserFormFields() {
-  const storedData = sessionStorage.getItem("currentLoggedin");
-  const userEmail = storedData ? JSON.parse(storedData).email : null;
-
-  if (!userEmail) {
-    console.log("No logged-in user found");
-    return;
-  }
-
-  try {
-    const userData = await fetchUserDetailsByEmail(userEmail);
-
-    if (userData && $$("profileSection")) {
-      // Update the form with fetched user data using setValues on the form
-      $$("profileSection").setValues({
-        full_name: userData.fullName || "",
-        email: userData.email || "",
-      });
-
-      // Set password if the password section exists
-      if ($$("passwordSection")) {
-        $$("passwordSection").setValues({
-          current_password: userData.password || "",
-        });
-      }
-      console.log("User form fields populated successfully");
-    } else {
-      console.log("Failed to load user details");
-    }
-  } catch (error) {
-    console.log("Error populating form fields:", error);
-  }
-}
+import {
+  populateUserFormFields,
+  saveProfileData,
+  saveUserDetailsToStorage,
+} from "../../utils/dataService.js";
 
 // Account Settings Configuration
 export const AccSettings = {
@@ -91,7 +37,7 @@ export const AccSettings = {
               {
                 id: "profileSection",
                 view: "form",
-                css: "card_section",
+
                 padding: 20,
                 elements: [
                   {
@@ -227,7 +173,6 @@ export const AccSettings = {
                             disabled: true,
                             height: 40,
                             bottomPadding: 15,
-                        
                           },
 
                           {
@@ -243,11 +188,15 @@ export const AccSettings = {
                             required: true,
                             height: 40,
                             bottomPadding: 15,
-                            
                           },
                         ],
                       },
                     ],
+                    on: {
+                      onViewShow: function () {
+                        populateUserFormFields();
+                      },
+                    },
                   },
                   {
                     padding: { top: 10 },
@@ -268,9 +217,13 @@ export const AccSettings = {
                           }
 
                           // Save profile data
-                          saveProfileData(
-                            "profile",
-                            $$("profileSection").getValues()
+                          const profileData = $$("profileSection").getValues();
+                          saveProfileData(profileData);
+
+                          // Save to session storage
+                          sessionStorage.setItem(
+                            "userProfile",
+                            JSON.stringify(profileData)
                           );
                           webix.message("Profile updated!");
                         },
@@ -442,27 +395,6 @@ export const AccSettings = {
                   {
                     responsive: "password_layout",
                     cols: [
-                      // Column 1
-                      {
-                        gravity: 1,
-                        minWidth: 250,
-                        rows: [
-                          {
-                            template:
-                              "<div class='form_label'>Current Password</div>",
-                            height: 30,
-                            css: "label_above",
-                          },
-                          {
-                            view: "text",
-                            type: "password",
-                            name: "current_password",
-                            required: true,
-                            height: 40,
-                            bottomPadding: 15,
-                          },
-                        ],
-                      },
                       // Column 2
                       {
                         gravity: 1,
@@ -520,20 +452,32 @@ export const AccSettings = {
                           let form = $$("passwordSection");
                           let values = form.getValues();
 
-                          if (!form.validate()) {
-                            webix.message({
-                              type: "error",
-                              text: "Please fill in all password fields.",
-                            });
-                            return;
-                          }
-
                           if (values.new_password !== values.confirm_password) {
                             webix.message({
                               type: "error",
                               text: "Passwords do not match!",
                             });
                             return;
+                          }
+                          // Validate the new password length
+                          if (values.new_password.length < 6) {
+                            webix.message({
+                              type: "error",
+                              text: "Password must be at least 6 characters long.",
+                            });
+                            return;
+                          }
+
+                          // Update the currentLoggedin user's password in session storage
+                          const currentLoggedIn = JSON.parse(
+                            sessionStorage.getItem("currentLoggedin")
+                          );
+                          if (currentLoggedIn) {
+                            currentLoggedIn.password = values.new_password; // Update password
+                            sessionStorage.setItem(
+                              "currentLoggedin",
+                              JSON.stringify(currentLoggedIn)
+                            ); // Save updated user session
                           }
 
                           webix.message("Password updated successfully!");
@@ -586,6 +530,7 @@ export const AccSettings = {
                             text: saveResult.message,
                             expire: 3000,
                           });
+                          
                         } else {
                           webix.message({
                             type: "error",
@@ -661,11 +606,6 @@ export const AccSettings = {
         }
       });
 
-      // Initial responsive check
-      handleResponsive();
-
-      // Add resize listener
-      window.addEventListener("resize", handleResponsive);
 
       // Call populateUserFormFields to fetch and populate user data from users.json
       populateUserFormFields();
